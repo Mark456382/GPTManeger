@@ -11,6 +11,7 @@ from kivy.core.text import LabelBase
 from kivy.properties import StringProperty, NumericProperty
 # > Import Typing
 from typing import Any, Union
+from translate import Translator
 # > Local Imports
 from chatGPT import chat_message
 from functions import get_asset_path
@@ -50,7 +51,8 @@ class Chat:
     def responce(self, *args):
         try:
             if self.val != "":
-                responce = chat_message(self.val)
+                tr = Translator(from_lang='Russian', to_lang='English')
+                responce = chat_message(tr.translate(self.val))
                 self.add_msg( Response(text=responce, size_hint_x=.75) )
                 self.ms.state.text = "Online"
         except: pass
