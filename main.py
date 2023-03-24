@@ -11,11 +11,12 @@ from kivy.core.text import LabelBase
 from kivy.properties import StringProperty, NumericProperty
 # > Import Typing
 from typing import Any, Union
-from translate import Translator
 # > Local Imports
 from chatGPT import chat_message
 from functions import get_asset_path
 from unitsdata import *
+# > Another Library
+from translate import Translator
 
 # > Windows Settings
 Window: WindowBase
