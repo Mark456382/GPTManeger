@@ -43,34 +43,34 @@ class Response(MDLabel):
 class Chat:
     def __init__(self, screen: MDScreen) -> None:
         self.ms = screen
-        self.val = ""
+        self.val_gpt = ""
+        self.val_trans = ""
     
     def add_msg(self, obj: Union[Response, Command]) -> None:
         self.ms.chat_list.add_widget(obj)
     
     def responce_gpt(self, *args):
-        try:
-            if self.val != "":
-                tr = Translator(from_lang='Russian', to_lang='English')
-                responce = chat_message(tr.translate(self.val))
-                self.add_msg( Response(text=responce, size_hint_x=.75) )
-                self.ms.state.text = "Online"
-        except: pass
-    
+        if self.val_gpt != "":
+            tr = Translator(from_lang='Russian', to_lang='English')
+            responce = chat_message(tr.translate(self.val_gpt))
+            self.add_msg( Response(text=responce, size_hint_x=.75) )
+            self.ms.state.text = "Online"
+
     def responce_trans(self, *args):
         try:
-            if self.val != "":
+            if self.val_trans != "":
                 tr = Translator(from_lang='russian', to_lang='english')
-                responce = tr.translate(self.val)
+                responce = tr.translate(self.val_trans)
                 self.add_msg(Response(text=responce, size_hint_x=.75) )
                 self.ms.state.text = "Online"
         except: pass
 
     def send_gpt(self, *args: Any):
         if self.ms != "":
-            self.val = self.ms.text_input.text
-            if self.val != "":
-                lv = len(self.val)
+            print(self.ms.text_input_1.text)
+            self.val_gpt = self.ms.text_input_1.text
+            if self.val_gpt != "":
+                lv = len(self.val_gpt)
                 
                 if lv < 6:      size, halign = .22, "center"
                 elif lv < 11:   size, halign = .32, "center"
@@ -80,15 +80,15 @@ class Chat:
                 else:           size, halign = .77, "left"
                 
                 self.ms.state.text = "typing..."
-                self.add_msg(Command(text=self.val, size_hint_x=size, halign=halign))
+                self.add_msg(Command(text=self.val_gpt, size_hint_x=size, halign=halign))
                 Clock.schedule_once(self.responce_gpt, 1)
-                self.ms.text_input.text = ''
+                self.ms.text_input_1.text = ''
     
     def send_trans(self, *args: Any):
         if self.ms != "":
-            self.val = self.ms.text_input.text
-            if self.val != "":
-                lv = len(self.val)
+            self.val_trans = self.ms.text_input_2.text
+            if self.val_trans != "":
+                lv = len(self.val_trans)
                 
                 if lv < 6:      size, halign = .22, "center"
                 elif lv < 11:   size, halign = .32, "center"
@@ -98,9 +98,9 @@ class Chat:
                 else:           size, halign = .77, "left"
                 
                 self.ms.state.text = "typing..."
-                self.add_msg(Command(text=self.val, size_hint_x=size, halign=halign))
+                self.add_msg(Command(text=self.val_trans, size_hint_x=size, halign=halign))
                 Clock.schedule_once(self.responce_trans, 1)
-                self.ms.text_input.text = ''
+                self.ms.text_input_2.text = ''
     
     def add(self, *args: Any) -> None: pass
 
@@ -117,8 +117,10 @@ class MeSure(MDApp):
     def build(self):
         self.title = WINDOW_TITLE
 
-        self.screen_manager.add_widget(Builder.load_file(get_asset_path("Translate.kv")))
+        
         self.screen_manager.add_widget(Builder.load_file(get_asset_path("GPT.kv")))
+        self.screen_manager.add_widget(Builder.load_file(get_asset_path("Translate.kv")))
+
 
         self.chat_control = Chat(self.screen_manager.get_screen('GPT'))
         self.chat_control = Chat(self.screen_manager.get_screen('trans'))
