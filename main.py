@@ -15,7 +15,8 @@ from typing import Any, Union
 from chatGPT import chat_message
 from functions import get_asset_path
 from unitsdata import *
-
+# > Another Import
+from translate import Translator
 # > Windows Settings
 Window: WindowBase
 Clock: ClockBase
@@ -47,7 +48,7 @@ class Chat:
     def add_msg(self, obj: Union[Response, Command]) -> None:
         self.ms.chat_list.add_widget(obj)
     
-    def responce(self, *args):
+    def responce_gpt(self, *args):
         try:
             if self.val != "":
                 responce = chat_message(self.val)
@@ -55,7 +56,16 @@ class Chat:
                 self.ms.state.text = "Online"
         except: pass
     
-    def send(self, *args: Any):
+    def responce_trans(self, *args):
+        try:
+            if self.val != "":
+                tr = Translator(from_lang='russian', to_lang='english')
+                responce = tr.translate(self.val)
+                self.add_msg(Response(text=responce, size_hint_x=.75) )
+                self.ms.state.text = "Online"
+        except: pass
+
+    def send_gpt(self, *args: Any):
         if self.ms != "":
             self.val = self.ms.text_input.text
             if self.val != "":
@@ -70,7 +80,25 @@ class Chat:
                 
                 self.ms.state.text = "typing..."
                 self.add_msg(Command(text=self.val, size_hint_x=size, halign=halign))
-                Clock.schedule_once(self.responce, 1)
+                Clock.schedule_once(self.responce_gpt, 1)
+                self.ms.text_input.text = ''
+    
+    def send_trans(self, *args: Any):
+        if self.ms != "":
+            self.val = self.ms.text_input.text
+            if self.val != "":
+                lv = len(self.val)
+                
+                if lv < 6:      size, halign = .22, "center"
+                elif lv < 11:   size, halign = .32, "center"
+                elif lv < 16:   size, halign = .45, "center"
+                elif lv < 21:   size, halign = .58, "center"
+                elif lv < 26:   size, halign = .71, "center"
+                else:           size, halign = .77, "left"
+                
+                self.ms.state.text = "typing..."
+                self.add_msg(Command(text=self.val, size_hint_x=size, halign=halign))
+                Clock.schedule_once(self.responce_trans, 1)
                 self.ms.text_input.text = ''
     
     def add(self, *args: Any) -> None: pass
@@ -88,9 +116,11 @@ class MeSure(MDApp):
     def build(self):
         self.title = WINDOW_TITLE
 
-        self.screen_manager.add_widget(Builder.load_file(get_asset_path("Chat.kv")))
+        self.screen_manager.add_widget(Builder.load_file(get_asset_path("Translate.kv")))
+        self.screen_manager.add_widget(Builder.load_file(get_asset_path("GPT.kv")))
 
-        self.chat_control = Chat(self.screen_manager.get_screen('chat'))
+        self.chat_control = Chat(self.screen_manager.get_screen('GPT'))
+        self.chat_control = Chat(self.screen_manager.get_screen('trans'))
 
         return self.screen_manager
 

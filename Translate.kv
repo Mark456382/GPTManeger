@@ -33,7 +33,7 @@ MDScreen:
     user_name: user_name
     state: state
     chat_list: chat_list
-    name: 'chat'
+    name: 'trans'
 
     FitImage:
         source: 'background.png'
@@ -47,7 +47,7 @@ MDScreen:
 
             MDLabel:
                 id: user_name
-                text: "Dr. Sure"
+                text: "Translate"
                 pos_hint: {"center_y": .5}
                 halign: "center"
                 font_name: "MontSem"
@@ -60,6 +60,17 @@ MDScreen:
                 halign: "center"
                 font_name: "MontReg"
                 font_size: "11sp"
+
+            MDIconButton:
+                icon: "back.png"
+                icon_size: "16sp"
+                pos_hint: {"center_x": .1, "center_y": .50}
+                user_font_size: "22sp"
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+                on_release: 
+                    root.manager.transition.direction = "right"
+                    root.manager.current = "GPT"
 
         ScrollView:
             size_hint_y: .77
@@ -115,7 +126,7 @@ MDScreen:
             theme_text_color: "Custom"
             text_color: 1, 1, 1, 1
             md_bg_color: 30/255, 144/255, 1, 1
-            on_release: app.chat_control.send()
+            on_release: app.chat_control.send_trans()
 
         MDIconButton:
             icon: "add.png"
