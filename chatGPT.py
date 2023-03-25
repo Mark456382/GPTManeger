@@ -1,3 +1,4 @@
+from translate import Translator
 import openai
 
 openai.api_key = "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"
@@ -23,5 +24,5 @@ def chat_message(content: str):
       messages=messages)
     chat_response = response.choices[0].message.content
     messages.append({"role": "assistant", "content": chat_response})
-
-    return chat_response
+    tr = Translator(from_lang='English', to_lang='Russian')
+    return tr.translate(chat_response)
